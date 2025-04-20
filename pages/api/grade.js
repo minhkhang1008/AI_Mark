@@ -38,6 +38,7 @@ export default async function handler(req, res) {
   rồi viết nhận xét tổng quan 1–2 câu.
   Những thành phần phụ như dấu gạch đầu dòng "-", dấu "+" hay cách dòng đều không quan trọng và không ảnh hưởng đến số điểm.
   Thêm nữa, chữ "i" và "y" trong Tiếng Việt rất giống nhau nên các từ như "pháp lí" và "pháp lý" đều giống nhau, hãy bỏ qua nếu có sự khác biệt này.
+  Lưu ý: Khi bạn chấm điểm, bạn cần chấm điểm tổng thể. Giả sử học sinh có thể ghi đúng 1 nửa của đáp án chuẩn thì chỉ có thể cho tối đa 50% điểm.
   Đáp án mẫu: """${answerKey}"""
   Bài làm: """${answer}"""
   Trả về đúng JSON: { "score": số, "feedback": "…" }
