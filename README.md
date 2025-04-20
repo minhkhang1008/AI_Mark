@@ -33,7 +33,7 @@
 | Tên biến               | Miêu tả                                                                                                     |
 |------------------------|-------------------------------------------------------------------------------------------------------------|
 | `OPENROUTER_API_KEY`   | API Key của OpenRouter (DeepSeek V3 free)                                                                   |
-| `ANSWER_KEYS_JSON`     | JSON chứa đáp án mẫu, ví dụ: ```json<br>{"q1":"Nội dung đáp án mẫu…","q2":"…"}<br>```                    |
+| `ANSWER_KEYS_JSON`     | JSON chứa đáp án mẫu, ví dụ: ```json{"q1":"Nội dung đáp án mẫu…","q2":"…"}```                    |
 
 
 ## 📄 License
