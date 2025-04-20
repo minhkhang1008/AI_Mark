@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom global styles */
+:root {
+  --color-primary: #1e3a8a;
+  --font-sans: 'Inter', sans-serif;
+}
+
+body {
+  @apply bg-gray-50 text-gray-800 font-sans;
+}

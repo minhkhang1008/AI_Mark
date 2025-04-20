@@ -1,0 +1,35 @@
+{
+  "name": "ai_mark",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chấm và đánh giá câu trả lời tự luận bằng AI",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start -p 3000",
+    "lint": "next lint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minhkhang1008/AI_Mark.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "json5": "^2.2.3",
+    "next": "^13.5.1",
+    "node-fetch": "^3.3.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.12",
+    "eslint": "^8.35.0",
+    "eslint-config-next": "^13.5.1",
+    "postcss": "^8.4.16",
+    "tailwindcss": "^3.4.0"
+  }
+}
