@@ -1,37 +1,26 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
+  if (req.method !== "POST")
     return res.status(405).json({ error: "Method Not Allowed" });
-  }
 
   const submissions = req.body.submissions;
-  if (!Array.isArray(submissions) || !submissions.length) {
+  if (!Array.isArray(submissions) || submissions.length === 0) {
     return res
       .status(400)
-      .json({ error: "Thiếu submissions: [{questionId,answer},…]" });
+      .json({ error: "Thiếu submissions: [{questionId,answer,answerKey},…]" });
   }
 
-  // 1. Parse answer keys từ ENV
-  let answerKeys;
-  try {
-    answerKeys = JSON.parse(process.env.ANSWER_KEYS_JSON || "{}");
-  } catch (e) {
-    console.error("Invalid ANSWER_KEYS_JSON:", e);
-    return res.status(500).json({ error: "Invalid ANSWER_KEYS_JSON" });
-  }
-
-  // 2. Chấm từng submission
   const results = await Promise.all(
-    submissions.map(async ({ questionId, answer }) => {
+    submissions.map(async ({ questionId, answer, answerKey }) => {
       const userAnswer = (answer || "").trim();
-      const answerKey = answerKeys[questionId]?.trim();
       if (!answerKey) {
         return {
           questionId,
           score: 0,
-          feedback: "Không tìm thấy đáp án mẫu cho câu hỏi này."
+          feedback: "Không có đáp án mẫu cho câu hỏi này."
         };
       }
       if (!userAnswer) {
@@ -42,19 +31,18 @@ export default async function handler(req, res) {
         };
       }
 
-      // 3. Tạo prompt
+      // Build the prompt
       const prompt = `
 Bạn là giáo viên. So sánh câu trả lời của học sinh với đáp án mẫu và cho điểm tổng thể % (0–100).
-Các ký tự phụ như dấu gạch đầu dòng, dấu "+" hay cách dòng không ảnh hưởng.
-Chữ "i" và "y" trong tiếng Việt tương đương, hãy bỏ qua sự khác biệt đó.
-Nếu học sinh trả lời đúng một phần đáp án, cho tương ứng phần trăm (ví dụ đúng 1/2 thì 50%).
+Các ký tự phụ hay định dạng (dấu gạch đầu dòng, xuống dòng…) không ảnh hưởng.
+Chữ "i" và "y" trong tiếng Việt tương đương, hãy bỏ qua nếu có khác biệt.
 Đáp án mẫu: """${answerKey}"""
 Bài làm: """${userAnswer}"""
-Trả về đúng định dạng JSON: { "score": số, "feedback": "…" }
+Trả về đúng JSON: { "score": số, "feedback": "…" }
       `;
 
-      // 4. Gọi API OpenRouter / DeepSeek
-      let choiceText;
+      // Call OpenRouter / DeepSeek
+      let aiContent;
       try {
         const apiRes = await fetch(
           "https://openrouter.ai/api/v1/chat/completions",
@@ -72,13 +60,13 @@ Trả về đúng định dạng JSON: { "score": số, "feedback": "…" }
           }
         );
         if (!apiRes.ok) {
-          const errTxt = await apiRes.text();
-          throw new Error(`OpenRouter error: ${errTxt}`);
+          const errText = await apiRes.text();
+          throw new Error(errText);
         }
         const { choices } = await apiRes.json();
-        choiceText = choices[0].message.content;
+        aiContent = choices[0].message.content;
       } catch (err) {
-        console.error(`Error calling OpenRouter for ${questionId}:`, err);
+        console.error(`Error calling AI for ${questionId}:`, err);
         return {
           questionId,
           score: 0,
@@ -86,24 +74,21 @@ Trả về đúng định dạng JSON: { "score": số, "feedback": "…" }
         };
       }
 
-      // 5. Parse JSON từ response
-      let data;
+      // Parse the JSON blob from AI response
       try {
-        const jsonStr = choiceText.match(/\{[\s\S]*\}/)?.[0];
-        data = JSON.parse(jsonStr);
+        const jsonBlob = aiContent.match(/\{[\s\S]*\}/)[0];
+        const { score, feedback } = JSON.parse(jsonBlob);
+        return { questionId, score, feedback };
       } catch (err) {
-        console.error(`Invalid JSON from AI for ${questionId}:`, choiceText, err);
+        console.error(`Invalid JSON from AI for ${questionId}:`, aiContent);
         return {
           questionId,
           score: 0,
           feedback: "AI trả về dữ liệu không hợp lệ."
         };
       }
-
-      return { questionId, ...data };
     })
   );
 
-  // 6. Trả về kết quả
-  return res.status(200).json({ results });
+  res.status(200).json({ results });
 }
