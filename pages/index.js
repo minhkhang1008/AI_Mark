@@ -1,90 +1,126 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Home() {
-  const [answer, setAnswer] = useState("");
-  const [result, setResult] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [results, setResults] = useState({});
+  const [loadingMap, setLoadingMap] = useState({});
 
-  // Đáp án mẫu
-  const answerKey = `
-Nguyên lý cung – cầu:
-- Khi giá tăng, lượng cung tăng, lượng cầu giảm.
-- Giá trần dưới giá cân bằng dẫn tới thiếu hụt.
-  `;
+  // 1. Lấy câu hỏi khi mount
+  useEffect(() => {
+    fetch("/api/questions")
+      .then((r) => r.json())
+      .then((data) => {
+        setQuestions(data);
+        const initA = {};
+        const initL = {};
+        data.forEach(({ id }) => {
+          initA[id] = "";
+          initL[id] = false;
+        });
+        setAnswers(initA);
+        setLoadingMap(initL);
+      });
+  }, []);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setResult(null);
+  const handleChange = (id, text) => {
+    setAnswers((prev) => ({ ...prev, [id]: text }));
+  };
+
+  const gradeQuestion = async (questionId) => {
+    if (!answers[questionId]?.trim()) return;
+
+    setLoadingMap((prev) => ({ ...prev, [questionId]: true }));
+    setResults((prev) => ({ ...prev, [questionId]: null }));
+
     try {
       const res = await fetch("/api/grade", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ answer, questionId: "q1" }),
+        body: JSON.stringify({
+          submissions: [
+            { questionId, answer: answers[questionId] }
+          ]
+        }),
       });
       const data = await res.json();
-      setResult(data);
-    } catch (err) {
-      setResult({ error: "Chấm bài thất bại" });
+      setResults((prev) => ({
+        ...prev,
+        [questionId]: data.results?.[0] || { error: "No result" }
+      }));
+    } catch {
+      setResults((prev) => ({
+        ...prev,
+        [questionId]: { error: "Chấm thất bại" }
+      }));
     } finally {
-      setIsLoading(false);
+      setLoadingMap((prev) => ({ ...prev, [questionId]: false }));
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-blue-50 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-8 space-y-6">
-        <h1 className="text-4xl font-extrabold text-center text-purple-800">
+    <div className="min-h-screen flex justify-center items-start p-6 bg-gradient-to-br from-purple-100 to-blue-50">
+      {/* Tăng chiều ngang bằng w-full + max-w-5xl */}
+      <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl space-y-6">
+        <h1 className="text-4xl font-bold text-center text-purple-800">
           Bài Tự Luận
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <textarea
-            rows={6}
-            className="w-full border border-gray-300 rounded-lg p-4 focus:outline-none focus:ring-2 focus:ring-purple-400 resize-none"
-            placeholder="Viết câu trả lời tại đây…"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-            required
-            disabled={isLoading}
-          />
+        {questions.map(({ id, prompt }, i) => (
+          <div key={id} className="card">
+            <label className="block font-medium text-gray-700 mb-2">
+              Câu {i + 1}: {prompt}
+            </label>
 
-          <button
-            type="submit"
-            className={`w-full py-3 rounded-full flex items-center justify-center font-semibold 
-              ${isLoading
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-purple-600 hover:bg-purple-700"}
-              text-white transition`}
-            disabled={isLoading}
-          >
-            {isLoading ? (
-              <div className="relative">
-                <div className="spinner"></div>
-                <div className="spinnerin"></div>
+            <textarea
+              rows={1}
+              className="auto-resize w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
+              value={answers[id]}
+              onChange={(e) => handleChange(id, e.target.value)}
+              onInput={(e) => {
+                e.target.style.height = "auto";
+                e.target.style.height = `${e.target.scrollHeight}px`;
+              }}
+              placeholder="Nhập câu trả lời…"
+              disabled={loadingMap[id]}
+            />
+
+            <button
+              onClick={() => gradeQuestion(id)}
+              disabled={loadingMap[id]}
+              className={`mt-3 inline-flex items-center gap-2 px-4 py-2 text-white font-semibold rounded-full transition
+                ${loadingMap[id]
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-purple-600 hover:bg-purple-700"
+                }`}
+            >
+              {loadingMap[id] ? (
+                <>
+                  <div className="relative">
+                    <div className="spinner"></div>
+                    <div className="spinnerin"></div>
+                  </div>
+                  Đang chấm…
+                </>
+              ) : (
+                "Chấm câu này"
+              )}
+            </button>
+
+            {results[id] && (
+              <div className="mt-4 bg-gray-50 border-l-4 border-purple-500 p-4 rounded">
+                {results[id].error ? (
+                  <p className="text-red-600">{results[id].error}</p>
+                ) : (
+                  <>
+                    <p><strong>Điểm:</strong> {results[id].score}%</p>
+                    <p className="mt-1"><strong>Nhận xét:</strong> {results[id].feedback}</p>
+                  </>
+                )}
               </div>
-            ) : (
-              "Nộp bài"
-            )}
-          </button>
-        </form>
-
-        {result && (
-          <div className="mt-6 bg-gray-50 border-l-4 border-purple-500 p-4 rounded-lg">
-            {result.error ? (
-              <p className="text-red-600 font-medium">{result.error}</p>
-            ) : (
-              <>
-                <p className="text-xl">
-                  <strong>Điểm:</strong> {result.score}%
-                </p>
-                <p className="mt-2 text-gray-700">
-                  <strong>Nhận xét:</strong> {result.feedback}
-                </p>
-              </>
             )}
           </div>
-        )}
+        ))}
       </div>
     </div>
   );

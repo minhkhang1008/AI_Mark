@@ -1,17 +1,60 @@
+/* 1. Tailwind directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom global styles */
+/* 2. Biến CSS toàn cục */
 :root {
   --color-primary: #1e3a8a;
+  --color-primary-light: #3b82f6;
   --font-sans: 'Inter', sans-serif;
 }
 
-body {
-  @apply bg-gray-50 text-gray-800 font-sans;
+/* 3. Base styles */
+html {
+  scroll-behavior: smooth;
 }
-/* From Uiverse.io by mrhyddenn */
+body {
+  @apply bg-gray-50 text-gray-800 font-sans leading-relaxed;
+  font-family: var(--font-sans);
+}
+
+/* 4. Typography */
+h1, h2, h3, h4 {
+  @apply font-bold text-gray-900;
+  line-height: 1.25;
+}
+h1 { @apply text-4xl mb-6; }
+h2 { @apply text-3xl mb-5; }
+p { @apply mb-4; }
+
+/* 5. Links & Buttons */
+a {
+  @apply text-blue-600 hover:text-blue-800 underline;
+}
+button {
+  @apply inline-block bg-[var(--color-primary)] text-white font-medium 
+         py-2 px-4 rounded-lg hover:bg-[var(--color-primary-light)] 
+         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] 
+         focus:ring-opacity-50 transition;
+}
+
+/* 6. Form elements */
+input,
+select {
+  @apply w-full border border-gray-300 rounded-md p-2 
+         focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] 
+         focus:border-[var(--color-primary)] transition;
+}
+
+/* 7. Auto‑resize Textarea */
+textarea.auto-resize {
+  @apply w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-purple-400 transition;
+  resize: none;
+  overflow: hidden;
+}
+
+/* 8. Spinner (From Uiverse.io by mrhyddenn) */
 .spinner {
   width: 3em;
   height: 3em;
@@ -46,3 +89,21 @@ body {
   }
 }
 
+/* 9. Container & Card Helpers */
+.container {
+  @apply mx-auto px-4 lg:px-0 max-w-3xl;
+}
+.card {
+  @apply bg-white shadow-lg rounded-lg p-6 mb-6;
+}
+
+/* 10. Custom Scrollbar */
+::-webkit-scrollbar {
+  @apply w-2;
+}
+::-webkit-scrollbar-track {
+  @apply bg-gray-200 rounded;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-400 rounded-full;
+}
