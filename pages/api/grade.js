@@ -43,7 +43,7 @@ export default async function handler(req, res) {
       Sau đó:
       1. Cho điểm tổng thể trên thang 0–100%.  
       2. Viết nhận xét khái quát 1–2 câu.  
-      3. Thêm **một câu gợi ý** về phần kiến thức mà học sinh cần ôn tập hoặc làm chắc hơn.
+      3. Thêm **một câu gợi ý** về phần kiến thức mà học sinh cần ôn tập hoặc làm chắc hơn (chỉ khi học sinh không đạt điểm tối đa)
       
       Trả về đúng định dạng JSON duy nhất:
       \`\`\`json
