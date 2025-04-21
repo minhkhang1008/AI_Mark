@@ -33,12 +33,28 @@ export default async function handler(req, res) {
 
       // Build the prompt
       const prompt = `
-Bạn là giáo viên. So sánh câu trả lời của học sinh với đáp án mẫu và cho điểm tổng thể % (0–100).
-Các ký tự phụ hay định dạng (dấu gạch đầu dòng, xuống dòng…) không ảnh hưởng.
-Chữ "i" và "y" trong tiếng Việt tương đương, hãy bỏ qua nếu có khác biệt.
-Đáp án mẫu: """${answerKey}"""
-Bài làm: """${userAnswer}"""
-Trả về đúng JSON: { "score": số, "feedback": "…" }
+      Bạn là một giáo viên giàu kinh nghiệm, chuyên chấm các bài tự luận. Khi so sánh câu trả lời của học sinh với đáp án mẫu, hãy:
+      - Bỏ qua tất cả khác biệt về trình bày và định dạng: dấu gạch đầu dòng, dấu chấm, dấu phẩy, dấu chấm phẩy, xuống dòng, khoảng cách, thụt đầu dòng…
+      - Bỏ qua chữ hoa/chữ thường.
+      - Bỏ qua các ký tự phụ như dấu nháy, dấu ngoặc, gạch nối…
+      - Bỏ qua sự khác nhau giữa “i” và “y” trong tiếng Việt.
+      
+      Tập trung hoàn toàn vào **nội dung** và **ý chính** của câu trả lời.  
+      Sau đó:
+      1. Cho điểm tổng thể trên thang 0–100%.  
+      2. Viết nhận xét khái quát 1–2 câu.  
+      3. Thêm **một câu gợi ý** về phần kiến thức mà học sinh cần ôn tập hoặc làm chắc hơn.
+      
+      Trả về đúng định dạng JSON duy nhất:
+      \`\`\`json
+      {
+        "score": <số>,       // số từ 0 đến 100
+        "feedback": "<nhận xét> và <gợi ý nên cải thiện phần nào>"
+      }
+      \`\`\`
+      
+      Đáp án mẫu: """${answerKey}"""  
+      Bài làm: """${userAnswer}"""
       `;
 
       // Call OpenRouter / DeepSeek
@@ -53,7 +69,7 @@ Trả về đúng JSON: { "score": số, "feedback": "…" }
               Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
             },
             body: JSON.stringify({
-              model: "deepseek/deepseek-chat:free",
+              model: "meta-llama/llama-3.2-3b-instruct:free ",
               messages: [{ role: "user", content: prompt }],
               temperature: 0
             })
