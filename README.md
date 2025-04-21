@@ -10,7 +10,8 @@
 - **Nhận xét khái quát** 1–2 câu cho mỗi bài làm  
 - **Loading spinner** sinh động khi chờ AI chấm bài  
 - **Giao diện hiện đại**: Next.js + Tailwind CSS + gradient background  
-- **Triển khai dễ dàng**: Lưu data hoàn toàn trên local browser và gọi API Openrouter, có thể chạy local hoặc host ở bất cứ đâu (hiện đang host free trên Vercel)
+- **Triển khai dễ dàng**: Lưu data hoàn toàn trên local browser và gọi API OpenRouter, có thể chạy local hoặc host ở bất cứ đâu (hiện đang host free trên Vercel)
+- **Trí tuệ nhân tạo**: Tuỳ ý lựa chọn model AI có mặt trên OpenRouter (nếu host local) (trên [AIchambai](https://aichambai.vercel.app/) sử dụng DeepSeek V3)
 
 ---
 
@@ -18,17 +19,16 @@
 
 - **Framework**: [Next.js](https://nextjs.org/) (React)  
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)  
-- **AI Backend**: [OpenRouter / Meta: Llama 3.2 3B Instruct](https://openrouter.ai)  
+- **AI Backend**: [OpenRouter / DeepSeek V3](https://openrouter.ai/deepseek/deepseek-chat:free)  
 - **Env Vars**:  
   - `OPENROUTER_API_KEY`  
-  - `ANSWER_KEYS_JSON`  
+  - `ANSWER_KEYS_JSON` (For my presets)
 - **Version Control**: Git + GitHub  
 - **Hosting**: [Vercel](https://vercel.com/)  
 
 ---
 
 ## ⚙️ Cấu hình biến môi trường
-- Đây là một điểm yếu của project này khi Answer Keys được để vào theo dạng Environment Variables
 
 | Tên biến               | Miêu tả                                                                                                     |
 |------------------------|-------------------------------------------------------------------------------------------------------------|
