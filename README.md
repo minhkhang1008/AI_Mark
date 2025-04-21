@@ -10,7 +10,7 @@
 - **Nhận xét khái quát** 1–2 câu cho mỗi bài làm  
 - **Loading spinner** sinh động khi chờ AI chấm bài  
 - **Giao diện hiện đại**: Next.js + Tailwind CSS + gradient background  
-- **Triển khai dễ dàng**: host miễn phí trên Vercel hoặc VPS/Cloud của bạn  
+- **Triển khai dễ dàng**: Lưu data hoàn toàn trên local browser và gọi API Openrouter, có thể chạy local hoặc host ở bất cứ đâu (hiện đang host free trên Vercel)
 
 ---
 
