@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method Not Allowed" });
@@ -44,6 +43,8 @@ export default async function handler(req, res) {
       1. Cho điểm tổng thể trên thang 0–100%.  
       2. Viết nhận xét khái quát 1–2 câu.  
       3. Thêm **một câu gợi ý** về phần kiến thức mà học sinh cần ôn tập hoặc làm chắc hơn (chỉ khi học sinh không đạt điểm tối đa)
+
+      Lưu ý đặc biệt: Đối với những câu tính toán, đầu tiên kiểm tra xem đây có phải là 1 câu cần trình bày nhiều dòng hay không. Nếu có, hãy chia điểm đều cho từng phần tính toán của học sinh. Lưu ý cho phần đáp án cuối cùng: Chỉ cho điểm nếu đáp án đúng hoàn toàn, còn những phần trình bày bạn tự xem và cho điểm, không cần so sánh đáp án mẫu. Đối với các bài tính toán cũng cần cho nhận xét dài hơn và chỉ rõ từng lỗi sai và hướng dẫn học sinh tiến bộ!
       
       Trả về đúng định dạng JSON duy nhất:
       \`\`\`json
