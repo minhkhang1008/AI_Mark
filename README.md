@@ -1,50 +1,85 @@
 # AI Mark – 🌟 Tự Động Chấm Bài Tự Luận Bằng AI
 
-> **AI Mark** là web app giúp giáo viên và học sinh tự động chấm điểm bài tự luận và nhận xét bằng trí tuệ nhân tạo **DeepSeek V3** – miễn phí, nhanh chóng và bảo mật.
+> **AI Mark** là web app giúp giáo viên và học sinh tự động chấm điểm và nhận xét bài tự luận bằng trí tuệ nhân tạo **DeepSeek V3**  – hoàn toàn **miễn phí**, **nhanh chóng** và **bảo mật**.
 
 ---
 
 ## 🔥 Tính năng nổi bật
 
-- **Chấm điểm tự động** theo tỷ lệ phần trăm (0–100%)  
-- **Nhận xét khái quát** Đưa ra nhận xét và gợi ý giúp đỡ học sinh khi học bài
-- **Loading spinner** sinh động khi chờ AI chấm bài  
-- **Giao diện hiện đại**: Next.js + Tailwind CSS + gradient background  
-- **Triển khai dễ dàng**: Lưu data hoàn toàn trên local browser và gọi API OpenRouter, có thể chạy local hoặc host ở bất cứ đâu (hiện đang host free trên Vercel)
-- **Trí tuệ nhân tạo**: Tuỳ ý lựa chọn model AI có mặt trên OpenRouter (nếu host local) (trên [AIchambai](https://aichambai.vercel.app/) sử dụng DeepSeek V3)
-- **Tuỳ biến bộ câu hỏi**: Tự do thêm, xoá các bộ câu hỏi của riêng mình. Các chỉnh sửa sẽ được lưu trực tiếp lên trình duyệt người dùng.
+- ### Chấm điểm & nhận xét tự động  
+  - Cho điểm theo phần trăm (0–100%)  
+  - Viết nhận xét khái quát, kèm gợi ý cải thiện, hỗ trợ giáo dục học sinh
+
+- ### Tuỳ biến bộ câu hỏi & quản lý  
+  - Chọn giữa các **preset** có sẵn hoặc tạo/bổ sung bộ mới  
+  - **Thêm / Xoá / Đổi tên** bộ câu hỏi, lưu thẳng vào `localStorage` của trình duyệt  
+  - **Hoàn tác (Ctrl+Z)** khi chỉnh sửa nội dung từng câu  
+
+- ### Nhập liệu bằng AI  
+  - “Nhập liệu bằng AI” – upload file (`.txt`, `.docx`)  
+  - AI tự động **tách** văn bản thành các cặp **Câu hỏi – Đáp án mẫu**  
+  - AI gợi ý luôn **tên bộ câu hỏi** phù hợp  
+
+- ### Import / Export linh hoạt  
+  - Hỗ trợ file `.txt` & `.docx` (có thể mở rộng thêm)  
+  - Có thể xử lý đa dạng file dù không theo định dạng nào nhờ trí tuệ nhân tạo
+
+- ### Giao diện & UX hiện đại  
+  - **Auto‑resize** textarea, spinner vui nhộn khi chấm bài  
+  - Next.js + Tailwind CSS, responsive, màu sắc tươi sáng  
+  - Lướt mượt, thao tác đơn giản  
 
 ---
 
-## 📦 Tech Stack
+## 📖 Hướng dẫn sử dụng
 
-- **Framework**: [Next.js](https://nextjs.org/) (React)  
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)  
-- **AI Backend**: [OpenRouter / DeepSeek V3](https://openrouter.ai/deepseek/deepseek-chat:free)  
-- **Env Vars**:  
-  - `OPENROUTER_API_KEY`  
+1. **Chọn bộ câu hỏi** từ dropdown:  
+   – Preset có sẵn hoặc bộ bạn đã tạo trước đó.  
+2. Nhấn **Chỉnh sửa** để:  
+   – Đổi tên bộ, thêm/xóa/sửa nội dung câu hỏi & đáp án.  
+   – Hoàn tác sai sót bằng **Ctrl+Z**.  
+3. Nhấn **+ Thêm bộ mới**:  
+   – Tạo bộ trống và tự động mở giao diện chỉnh sửa.  
+4. Nhấn **Nhập liệu bằng AI**:  
+   – Upload file `.txt` / `.docx` → đợi AI tách & gợi ý tên bộ.  
+5. Trên màn hình Quiz:  
+   – Nhập câu trả lời vào từng ô trả lời. 
+   – Nhấn **Chấm** để AI chấm điểm.
+   – Xem kết quả ngay bên dưới từng câu.  
+
+---
+
+## 📦 Tech Stack
+
+- **Framework**: Next.js (React)  
+- **Styling**: Tailwind CSS  
+- **AI Backend**: OpenRouter / DeepSeek  
+- **DOCX Parser**: Mammoth.js  
+- **Local Persistence**: `localStorage` (client‑side)  
 - **Version Control**: Git + GitHub  
-- **Hosting**: [Vercel](https://vercel.com/)  
+- **Hosting**: Vercel  
 
 ---
 
-## ⚙️ Cấu hình biến môi trường
+## ⚙️ Biến môi trường
 
-| Tên biến               | Miêu tả                                                                                                     |
-|------------------------|-------------------------------------------------------------------------------------------------------------|
-| `OPENROUTER_API_KEY`   | API Key của OpenRouter (DeepSeek V3)                                                                  |              |
+| Tên biến               | Miêu tả                                                         |
+|------------------------|-----------------------------------------------------------------|
+| `OPENROUTER_API_KEY`   | API Key truy cập OpenRouter (DeepSeek model)                    |
 
+---
 
---
+## 🔮 Định hướng tương lai
 
-## ⚒️ Cải tiến trong tương lai
-- **Đăng nhập**: Lưu thông tin theo người dùng thay vì lưu cục bộ
-- **Ngôn ngữ**: Thêm Tiếng Anh và các ngôn ngữ khác
+- **Mở rộng input**: hỗ trợ thêm PDF, Markdown, Excel…  
+- **Đăng nhập & multi‑user**: lưu trữ riêng biệt theo tài khoản  
+- **Chia sẻ & export**: xuất PDF/CSV kết quả chấm bài và bộ câu hỏi  
+- **Nâng cao UI**: Dark mode, theme tuỳ chọn  
+
+---
 
 ## 📄 License
 
-AI Mark được phát hành theo [MIT License](./LICENSE).  
-
----
+Phát hành theo [MIT License](./LICENSE).  
 
 > **AI Mark** – Áp dụng AI vào giảng dạy, tiết kiệm thời gian chấm bài và nâng cao trải nghiệm học tập! 🚀  
