@@ -1,0 +1,4 @@
+Cho biết số Pi làm tròn đến hàng đơn vị
+3
+Cho biết 1.5 làm tròn đến hàng đơn vị 
+2

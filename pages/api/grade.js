@@ -40,7 +40,7 @@ export default async function handler(req, res) {
       
       Tập trung hoàn toàn vào **nội dung** và **ý chính** của câu trả lời.  
       Sau đó:
-      1. Cho điểm tổng thể trên thang 0–100%.  
+      1. Cho điểm tổng thể trên thang 0–100%. Lưu ý bạn cần chấm một cách gắt gao và cụ thể hơn, đừng cố lấy điểm tròn mà hãy sẵn sàng đưa ra những điểm lẻ như 11%, 12%,... Không cho thừa điểm một cách bừa bãi.
       2. Viết nhận xét khái quát 1–2 câu.  
       3. Thêm **một câu gợi ý** về phần kiến thức mà học sinh cần ôn tập hoặc làm chắc hơn (chỉ khi học sinh không đạt điểm tối đa)
 
