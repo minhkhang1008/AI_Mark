@@ -69,7 +69,7 @@ export default async function handler(req, res) {
               Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`
             },
             body: JSON.stringify({
-              model: "meta-llama/llama-3.2-3b-instruct:free ",
+              model: "deepseek/deepseek-chat-v3-0324:free",
               messages: [{ role: "user", content: prompt }],
               temperature: 0
             })

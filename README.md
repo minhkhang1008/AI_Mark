@@ -1,6 +1,6 @@
 # AI Mark – 🌟 Tự Động Chấm Bài Tự Luận Bằng AI
 
-> **AI Mark** là web app giúp giáo viên và học sinh tự động chấm điểm bài tự luận và nhận xét bằng trí tuệ nhân tạo **Meta: Llama 3.2 3B Instruct** – miễn phí, nhanh chóng và bảo mật.
+> **AI Mark** là web app giúp giáo viên và học sinh tự động chấm điểm bài tự luận và nhận xét bằng trí tuệ nhân tạo **DeepSeek V3 0324** – miễn phí, nhanh chóng và bảo mật.
 
 ---
 
@@ -32,7 +32,7 @@
 
 | Tên biến               | Miêu tả                                                                                                     |
 |------------------------|-------------------------------------------------------------------------------------------------------------|
-| `OPENROUTER_API_KEY`   | API Key của OpenRouter (Meta: Llama 3.2 3B Instruct)                                                                  |
+| `OPENROUTER_API_KEY`   | API Key của OpenRouter (DeepSeek V3 0324)                                                                  |
 | `ANSWER_KEYS_JSON`     | JSON chứa đáp án mẫu, ví dụ: ```'{"q1":"Nội dung đáp án mẫu...","q2":"…"}```                    |
 
 
