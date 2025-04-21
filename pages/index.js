@@ -110,7 +110,7 @@ export default function Home() {
       {/* Main card */}
       <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl space-y-6">
         <h1 className="text-4xl font-bold text-center text-purple-800">
-          🔖 AI Mark – Chấm Tự Luận
+          🔖 AI Mark – Chấm Tự Luận (Beta)
         </h1>
 
         {/* Preset selector & add button */}
