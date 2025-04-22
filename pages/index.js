@@ -1,9 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 import mammoth from "mammoth";               
 import { PRESETS } from "../data/presets";
+import { useAuth } from "../contexts/AuthContext";
+import { db } from "../lib/firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function Home() {
   const STORAGE_KEY = "ai_mark_custom_sets";
+  const { user, signOut } = useAuth();
 
   // All sets (presets + custom)
   const [sets, setSets] = useState([]);
@@ -13,6 +17,7 @@ export default function Home() {
   const [answers, setAnswers] = useState({});
   const [results, setResults] = useState({});
   const [loadingMap, setLoadingMap] = useState({});
+  const [customSets, setCustomSets] = useState([]);
 
   // Edit modal state (select / import / edit)
   const [showEditModal, setShowEditModal] = useState(false);
@@ -40,9 +45,40 @@ export default function Home() {
     "bg-teal-500 hover:bg-teal-600 border-teal-400 text-white",
   ];
 
-  // Load sets on mount
+  // Load custom sets on mount or when user changes
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const load = async () => {
+      const ls = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+      let cs = ls;
+      if (user) {
+        const ref = doc(db, "questionSets", user.uid);
+        const snap = await getDoc(ref);
+        if (snap.exists()) {
+          cs = snap.data().sets;
+        }
+      }
+      setCustomSets(cs);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cs));
+
+      // rebuild full sets list
+      const presetSets = Object.keys(PRESETS).map((key) => ({
+        id: key,
+        name: key,
+        questions: PRESETS[key].map((q, i) => ({
+          ...q,
+          id: `${key}-q${i + 1}`,
+        })),
+      }));
+      const all = [...presetSets, ...cs];
+      setSets(all);
+      if (!currentSetId && all.length) setCurrentSetId(all[0].id);
+    };
+
+    load();
+  }, [user]);
+
+  // Rebuild `sets` whenever customSets change
+  useEffect(() => {
     const presetSets = Object.keys(PRESETS).map((key) => ({
       id: key,
       name: key,
@@ -51,10 +87,10 @@ export default function Home() {
         id: `${key}-q${i + 1}`,
       })),
     }));
-    const all = [...presetSets, ...stored];
+    const all = [...presetSets, ...customSets];
     setSets(all);
-    if (all.length) setCurrentSetId(all[0].id);
-  }, []);
+    if (!currentSetId && all.length) setCurrentSetId(all[0].id);
+  }, [customSets]);
 
   // Re-init quiz when currentSetId changes
   useEffect(() => {
@@ -198,7 +234,7 @@ export default function Home() {
   };
 
   // Delete set with double-confirm
-  const deleteSetDoubleConfirm = (setId) => {
+  const deleteSetDoubleConfirm = async (setId) => {
     if (!confirm("Bạn có chắc muốn xóa bộ này?")) return;
     if (!confirm("Hành động này không thể hoàn tác. Vẫn xóa?")) return;
     const filtered = sets.filter((s) => s.id !== setId);
@@ -206,14 +242,18 @@ export default function Home() {
     const custom = filtered.filter(
       (s) => !Object.keys(PRESETS).includes(s.id)
     );
+    setCustomSets(custom);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(custom));
+    if (user) {
+      await setDoc(doc(db, "questionSets", user.uid), { sets: custom });
+    }
     if (currentSetId === setId && filtered.length) {
       setCurrentSetId(filtered[0].id);
     }
   };
 
   // Reset presets
-  const resetPresets = () => {
+  const resetPresets = async () => {
     if (!confirm("Reset tất cả preset về mặc định?")) return;
     const presetSets = Object.keys(PRESETS).map((key) => ({
       id: key,
@@ -227,24 +267,32 @@ export default function Home() {
       (s) => !Object.keys(PRESETS).includes(s.id)
     );
     setSets([...presetSets, ...custom]);
+    setCustomSets(custom);
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify(custom)
     );
+    if (user) {
+      await setDoc(doc(db, "questionSets", user.uid), { sets: custom });
+    }
   };
 
   // Save edits
-  const saveSetEdits = () => {
+  const saveSetEdits = async () => {
     const updated = sets.filter((s) => s.id !== editingSetId);
     updated.push({ id: editingSetId, name: editSetName, questions: editQuestions });
     setSets(updated);
     const custom = updated.filter(
       (s) => !Object.keys(PRESETS).includes(s.id)
     );
+    setCustomSets(custom);
     localStorage.setItem(
       STORAGE_KEY,
       JSON.stringify(custom)
     );
+    if (user) {
+      await setDoc(doc(db, "questionSets", user.uid), { sets: custom });
+    }
     setShowEditModal(false);
   };
 
@@ -289,36 +337,50 @@ export default function Home() {
   const currentSet = sets.find((s) => s.id === currentSetId) || { questions: [] };
 
   return (
-    <div className="min-h-screen flex justify-center p-6 bg-gradient-to-br from-purple-100 to-blue-50">
-      <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl space-y-6">
-        <h1 className="text-4xl font-bold text-center text-purple-800">🔖 AI Mark – Chấm Tự Luận</h1>
-        {/* Set selector + edit */}
-        <div className="flex items-center gap-4">
-          <select className="border rounded px-3 py-2 text-sm" value={currentSetId || ""} onChange={(e) => setCurrentSetId(e.target.value)}>
-            {sets.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-          </select>
-          <button className="bg-blue-400 text-white px-3 py-1 text-sm rounded hover:bg-blue-500 transition" onClick={openEditModal}>Chỉnh sửa</button>
-        </div>
-        {/* Quiz questions */}
-        {currentSet.questions.map((q, i) => (
-          <div key={q.id} className="card space-y-4">
-            <label className="block font-medium text-gray-700">Câu {i + 1}: {q.prompt}</label>
-            <textarea
-              rows={1} placeholder="Nhập câu trả lời..."
-              className="auto-resize w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-400 transition"
-              value={answers[q.id] || ""}
-              onChange={(e) => handleAnswerChange(q.id, e.target.value)}
-              onInput={(e) => { e.target.style.height = "auto"; e.target.style.height = `${e.target.scrollHeight}px`; }}
-              disabled={loadingMap[q.id]}
-            />
-            <button onClick={() => gradeQuestion(q)} disabled={loadingMap[q.id]} className={`inline-flex items-center gap-2 px-4 py-2 text-white font-semibold rounded-full transition ${loadingMap[q.id]?'bg-gray-400 cursor-not-allowed':'bg-purple-600 hover:bg-purple-700'}`}>
-              {loadingMap[q.id] ? <><div className="relative"><div className="spinner"/><div className="spinnerin"/></div>Đang chấm…</> : "Chấm"}
-            </button>
-            {results[q.id] && <div className="mt-4 bg-gray-50 border-l-4 border-purple-500 p-4 rounded"><p><strong>Điểm:</strong> {results[q.id].score}%</p><p className="mt-1"><strong>Nhận xét:</strong> {results[q.id].feedback}</p></div>}
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-50">
+      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
+        <h1 className="text-xl font-bold text-purple-800">AI Mark</h1>
+        {user ? (
+          <button onClick={signOut} className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
+            Sign out
+          </button>
+        ) : (
+          <a href="/login" className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
+            Sign in
+          </a>
+        )}
+      </header>
+      <div className="flex-1 flex justify-center p-6">
+        <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl space-y-6">
+          <h1 className="text-4xl font-bold text-center text-purple-800">🔖 AI Mark – Chấm Tự Luận</h1>
+          {/* Set selector + edit */}
+          <div className="flex items-center gap-4">
+            <select className="border rounded px-3 py-2 text-sm" value={currentSetId || ""} onChange={(e) => setCurrentSetId(e.target.value)}>
+              {sets.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+            <button className="bg-blue-400 text-white px-3 py-1 text-sm rounded hover:bg-blue-500 transition" onClick={openEditModal}>Chỉnh sửa</button>
           </div>
-        ))}
+          {/* Quiz questions */}
+          {currentSet.questions.map((q, i) => (
+            <div key={q.id} className="card space-y-4">
+              <label className="block font-medium text-gray-700">Câu {i + 1}: {q.prompt}</label>
+              <textarea
+                rows={1} placeholder="Nhập câu trả lời..."
+                className="auto-resize w-full border rounded-lg p-3 focus:ring-2 focus:ring-purple-400 transition"
+                value={answers[q.id] || ""}
+                onChange={(e) => handleAnswerChange(q.id, e.target.value)}
+                onInput={(e) => { e.target.style.height = "auto"; e.target.style.height = `${e.target.scrollHeight}px`; }}
+                disabled={loadingMap[q.id]}
+              />
+              <button onClick={() => gradeQuestion(q)} disabled={loadingMap[q.id]} className={`inline-flex items-center gap-2 px-4 py-2 text-white font-semibold rounded-full transition ${loadingMap[q.id]?'bg-gray-400 cursor-not-allowed':'bg-purple-600 hover:bg-purple-700'}`}>
+                {loadingMap[q.id] ? <><div className="relative"><div className="spinner"/><div className="spinnerin"/></div>Đang chấm…</> : "Chấm"}
+              </button>
+              {results[q.id] && <div className="mt-4 bg-gray-50 border-l-4 border-purple-500 p-4 rounded"><p><strong>Điểm:</strong> {results[q.id].score}%</p><p className="mt-1"><strong>Nhận xét:</strong> {results[q.id].feedback}</p></div>}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Edit Modal */}
