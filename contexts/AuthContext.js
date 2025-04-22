@@ -6,6 +6,8 @@ import {
   signInWithPopup,
   GoogleAuthProvider,
   signOut as fbSignOut,
+  setPersistence,
+  browserLocalPersistence,
 } from "firebase/auth";
 import { auth } from "../lib/firebase";
 
@@ -16,11 +18,17 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return unsubscribe;
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => {
+        const unsubscribe = onAuthStateChanged(auth, (u) => {
+          setUser(u);
+          setLoading(false);
+        });
+        return unsubscribe;
+      })
+      .catch((err) => {
+        console.error("Failed to set persistence:", err);
+      });
   }, []);
 
   const signIn = (email, pass) =>
