@@ -12,17 +12,13 @@
 
 - ### Tuỳ biến bộ câu hỏi & quản lý  
   - Chọn giữa các **preset** có sẵn hoặc tạo/bổ sung bộ mới  
-  - **Thêm / Xoá / Đổi tên** bộ câu hỏi, lưu thẳng vào `localStorage` của trình duyệt  
+  - **Thêm / Xoá / Đổi tên** bộ câu hỏi, lưu và đồng bộ hoá theo từng tài khoản
   - **Hoàn tác (Ctrl+Z)** khi chỉnh sửa nội dung từng câu  
 
 - ### Nhập liệu bằng AI  
   - “Nhập liệu bằng AI” – upload file (`.txt`, `.docx`)  
   - AI tự động **tách** văn bản thành các cặp **Câu hỏi – Đáp án mẫu**  
   - AI gợi ý luôn **tên bộ câu hỏi** phù hợp  
-
-- ### Import / Export linh hoạt  
-  - Hỗ trợ file `.txt` & `.docx` (có thể mở rộng thêm)  
-  - Có thể xử lý đa dạng file dù không theo định dạng nào nhờ trí tuệ nhân tạo
 
 - ### Đồng bộ và lưu dữ liệu theo tài khoản
   - Hỗ trợ đăng nhập bằng email/Google/Github an toàn qua Firebase Authentication
