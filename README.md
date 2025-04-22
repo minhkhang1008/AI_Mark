@@ -24,6 +24,11 @@
   - Hỗ trợ file `.txt` & `.docx` (có thể mở rộng thêm)  
   - Có thể xử lý đa dạng file dù không theo định dạng nào nhờ trí tuệ nhân tạo
 
+- ### Đồng bộ và lưu dữ liệu theo tài khoản
+  - Hỗ trợ đăng nhập bằng email/Google/Github an toàn qua Firebase Authentication
+  - Các bộ câu hỏi được lưu và đồng bộ hoá theo từng tài khoản
+  - Bộ câu hỏi cũng đồng thời được lưu vào trình duyệt, tránh rủi ro mất dữ liệu trong quá trình lưu
+
 - ### Giao diện & UX hiện đại  
   - **Auto‑resize** textarea, spinner vui nhộn khi chấm bài  
   - Next.js + Tailwind CSS, responsive, màu sắc tươi sáng  
@@ -72,7 +77,6 @@
 ## 🔮 Định hướng tương lai
 
 - **Mở rộng input**: hỗ trợ thêm PDF, Markdown, Excel…  
-- **Đăng nhập & multi‑user**: lưu trữ riêng biệt theo tài khoản  
 - **Chia sẻ & export**: xuất PDF/CSV kết quả chấm bài và bộ câu hỏi  
 - **Nâng cao UI**: Dark mode, theme tuỳ chọn  
 
