@@ -8,6 +8,7 @@ import { doc, getDoc, setDoc } from "firebase/firestore";
 export default function Home() {
   const STORAGE_KEY = "ai_mark_custom_sets";
   const { user, signOut } = useAuth();
+  
 
   // All sets (presets + custom)
   const [sets, setSets] = useState([]);
@@ -338,21 +339,22 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-purple-100 to-blue-50">
-      <header className="p-4 flex justify-between items-center bg-white shadow-sm">
-        <h1 className="text-xl font-bold text-purple-800">AI Mark</h1>
-        {user ? (
-          <button onClick={signOut} className="text-sm bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded">
-            Sign out
-          </button>
-        ) : (
-          <a href="/login" className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">
-            Sign in
-          </a>
-        )}
-      </header>
       <div className="flex-1 flex justify-center p-6">
         <div className="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-xl space-y-6">
-          <h1 className="text-4xl font-bold text-center text-purple-800">🔖 AI Mark – Chấm Tự Luận</h1>
+          <div className="relative">
+            <h1 className="text-4xl font-bold text-center text-purple-800">🔖 AI Mark – Chấm Tự Luận</h1>
+            <div className="absolute right-0 top-0">
+              {user ? (
+                <button onClick={signOut} className="text-sm bg-gray-200 hover:bg-gray-300 px-4 py-2 rounded-full shadow-sm transition-all duration-200 flex items-center gap-2">
+                  <span>Sign out</span>
+                </button>
+              ) : (
+                <a href="/login" className="text-sm bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white px-4 py-2 rounded-full shadow-sm transition-all duration-200 flex items-center gap-2 no-underline">
+                  <span>Sign in</span>
+                </a>
+              )}
+            </div>
+          </div>
           {/* Set selector + edit */}
           <div className="flex items-center gap-4">
             <select className="border rounded px-3 py-2 text-sm" value={currentSetId || ""} onChange={(e) => setCurrentSetId(e.target.value)}>

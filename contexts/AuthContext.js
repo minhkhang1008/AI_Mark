@@ -3,8 +3,10 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInWithPopup,
   GoogleAuthProvider,
+  GithubAuthProvider,
   signOut as fbSignOut,
   setPersistence,
   browserLocalPersistence,
@@ -18,32 +20,44 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Dùng local persistence để giữ đăng nhập trên nhiều tab
     setPersistence(auth, browserLocalPersistence)
       .then(() => {
-        const unsubscribe = onAuthStateChanged(auth, (u) => {
+        return onAuthStateChanged(auth, (u) => {
           setUser(u);
           setLoading(false);
         });
-        return unsubscribe;
       })
-      .catch((err) => {
-        console.error("Failed to set persistence:", err);
-      });
+      .catch((e) => console.error("Persistence error:", e));
   }, []);
 
+  // Email/Password
   const signIn = (email, pass) =>
     signInWithEmailAndPassword(auth, email, pass);
+  const signUp = (email, pass) =>
+    createUserWithEmailAndPassword(auth, email, pass);
 
-  const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    return signInWithPopup(auth, provider);
-  };
+  // Google
+  const googleProvider = new GoogleAuthProvider();
+  const signInWithGoogle = () => signInWithPopup(auth, googleProvider);
+
+  // GitHub
+  const githubProvider = new GithubAuthProvider();
+  const signInWithGithub = () => signInWithPopup(auth, githubProvider);
 
   const signOut = () => fbSignOut(auth);
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, signIn, signInWithGoogle, signOut }}
+      value={{
+        user,
+        loading,
+        signIn,
+        signUp,
+        signInWithGoogle,
+        signInWithGithub,
+        signOut,
+      }}
     >
       {children}
     </AuthContext.Provider>
