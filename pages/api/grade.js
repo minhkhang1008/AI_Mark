@@ -37,11 +37,13 @@ export default async function handler(req, res) {
       - Bỏ qua chữ hoa/chữ thường.
       - Bỏ qua các ký tự phụ như dấu nháy, dấu ngoặc, gạch nối…
       - Bỏ qua sự khác nhau giữa “i” và “y” trong tiếng Việt.
+      - Bỏ qua những lỗi sai như thừa/thiếu dấu chấm, dấu phẩy,vv. 
+      - Xem xét những lỗi sai về từ vựng của học sinh, nếu học sinh sử dụng từ có nghĩa tương đồng thì vẫn tính đúng
       
       Tập trung hoàn toàn vào **nội dung** và **ý chính** của câu trả lời.  
       Sau đó:
       1. Cho điểm tổng thể trên thang 0–100%. Lưu ý bạn cần chấm một cách gắt gao và cụ thể hơn, đừng cố lấy điểm tròn mà hãy sẵn sàng đưa ra những điểm lẻ như 11%, 12%,... Không cho thừa điểm một cách bừa bãi.
-      2. Viết nhận xét khái quát 1–2 câu.  
+      2. Viết nhận xét khái quát 1–2 câu. Ngoài ra, cần chỉ rõ điểm sai của học sinh (viết ra những lỗi sai cụ thể để học sinh biết sửa lỗi). Không chỉ nói học sinh sai những phần - chủ đề nào mà cần cụ thể sai ở câu - chữ nào, đáp án nào!
       3. Thêm **một câu gợi ý** về phần kiến thức mà học sinh cần ôn tập hoặc làm chắc hơn (chỉ khi học sinh không đạt điểm tối đa)
 
       Lưu ý đặc biệt: Đối với những câu tính toán, đầu tiên kiểm tra xem đây có phải là 1 câu cần trình bày nhiều dòng hay không. Nếu có, hãy chia điểm đều cho từng phần tính toán của học sinh. Lưu ý cho phần đáp án cuối cùng: Chỉ cho điểm nếu đáp án đúng hoàn toàn, còn những phần trình bày bạn tự xem và cho điểm, không cần so sánh đáp án mẫu. Đối với các bài tính toán cũng cần cho nhận xét dài hơn và chỉ rõ từng lỗi sai và hướng dẫn học sinh tiến bộ!
